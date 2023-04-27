@@ -10,6 +10,7 @@ const Map = (props) => {
   const [isOpenFilter, setIsOpenFilter] = useState(false);
   const { lat, lng, zoom } = props;
   let ref = useRef();
+  const shouldLog = useRef(true);
 
   function addSVGMarkers(map) {
     //Create the svg mark-up
@@ -17,7 +18,7 @@ const Map = (props) => {
       '<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
       '<rect stroke="black" fill="${FILL}" x="1" y="1" width="22" height="22" />' +
       '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-      'text-anchor="middle" fill="${STROKE}" >C</text></svg>';
+      'text-anchor="middle" fill="${STROKE}" >A</text></svg>';
     // Add the first marker
     let bearsIcon = new H.map.Icon(
         svgMarkup.replace("${FILL}", "blue").replace("${STROKE}", "red")
@@ -100,13 +101,12 @@ const Map = (props) => {
       //   );
     });
   };
-
   const dynamicPin = (latt, long, map) => {
     let svgMarkup =
-      '<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
-      '<rect stroke="black" fill="${FILL}" x="1" y="1" width="22" height="22" />' +
+      `<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
+      '<rect stroke="black" fill="pink" x="1" y="1" width="22" height="22" />' +
       '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
-      'text-anchor="middle" fill="${STROKE}" >C</text></svg>';
+      'text-anchor="middle" fill="black" >${10}</text></svg>`;
 
     var manualMarkerIcon = new H.map.Icon(
         svgMarkup.replace("${FILL}", "pink").replace("${STROKE}", "black")
@@ -119,16 +119,21 @@ const Map = (props) => {
   };
 
   useEffect(() => {
+    if (shouldLog.current) {
     if (!map) {
+      shouldLog.current = false;
+      console.log('herer')
       // instantiate a platform, default layers and a map as usual
       const platform = new H.service.Platform({
         apikey: "KhMSKvQ8SQplClcz_4wM0f0BU0GBuuXqxXlF57a4OOY",
       });
+      
       const layers = platform.createDefaultLayers();
-      const map = new H.Map(ref.current, layers.vector.normal.map, {
+      console.log('layers ----->', layers)
+      const map = new H.Map(ref.current, layers.raster.terrain.map, {
         pixelRatio: window.devicePixelRatio || 1,
         center: { lat: 0, lng: 0 },
-        zoom: 2,
+        zoom: 1,
       });
       // onResize(ref.current, () => {
       //   map.getViewPort().resize();
@@ -141,7 +146,7 @@ const Map = (props) => {
       addSVGMarkers(map);
       addPolylineToMap(map);
       // setUpClickListener(map);
-    }
+    }}
     // if (map) {
     //   clearTimeout(timeout);
     //   setTimeout(() => {
@@ -154,7 +159,7 @@ const Map = (props) => {
   return (
     <>
       <div
-        style={{ position: "relative", width: "4000px", height: "1000px" }}
+        style={{ position: "relative", width: "1000", height: "1000px" }}
         ref={ref}
       />
       {isOpenFilter && (

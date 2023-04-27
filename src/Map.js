@@ -9,10 +9,18 @@ export default class Map extends React.Component {
     this.ref = React.createRef();
     // reference to the map
     this.map = null;
-    this.state = { lat: "", long: "" };
+    this.state = { 
+      lat: "", 
+      long: "",
+      isOpenFilter: false
+    };
   }
 
-  addSVGMarkers(map) {
+  handleOpenModal = () => {
+    this.setState({isOpenFilter: true})
+  }
+
+  addSVGMarkers = (map) => {
     //Create the svg mark-up
     var svgMarkup =
       '<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
@@ -47,6 +55,22 @@ export default class Map extends React.Component {
         { icon: abcIcon }
       );
     map.addObject(abcMarker);
+
+    abcMarker.addEventListener(
+      "tap",
+      function (evt){
+        // event target is the marker itself, group is a parent event target
+        // for all objects that it contains
+        this.handleOpenModal()
+        // var bubble = new H.ui.InfoBubble(evt.target.getGeometry(), {
+        //   // read custom data
+        //   content: evt.target.getData(),
+        // });
+        // // show info bubble
+        // H.ui.addBubble(bubble);
+      },
+      false
+    );
 
     //
     var manualMarkerIcon = new H.map.Icon(
@@ -112,7 +136,7 @@ export default class Map extends React.Component {
       this.map = map;
       this.addSVGMarkers(map);
       this.addPolylineToMap(map);
-      this.setUpClickListener(map);
+      // this.setUpClickListener(map);
     }
   }
 
@@ -131,6 +155,6 @@ export default class Map extends React.Component {
   }
 
   render() {
-    return <div style={{ width: "100%", height: "300px" }} ref={this.ref} />;
+    return <div style={{ width: "100%", height: "1000px" }} ref={this.ref} />;
   }
 }
