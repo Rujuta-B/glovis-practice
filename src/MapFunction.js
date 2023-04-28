@@ -23,32 +23,42 @@ const Map = (props) => {
     let bearsIcon = new H.map.Icon(
         svgMarkup.replace("${FILL}", "blue").replace("${STROKE}", "red")
       ),
-      bearsMarker = new H.map.Marker(
-        { lat: 11.8625, lng: -17.6166 },
-        { icon: bearsIcon }
+      africa = new H.map.Marker(
+        { lat: 11.8625, lng: -17.6166 }
+        // { icon: bearsIcon }
       );
-    map.addObject(bearsMarker);
+    map.addObject(africa);
     // Add the second marker.
     let cubsIcon = new H.map.Icon(
         svgMarkup.replace("${FILL}", "pink").replace("${STROKE}", "black")
       ),
-      cubsMarker = new H.map.Marker(
-        { lat: 20.5937, lng: 78.9629 },
-        { icon: cubsIcon }
+      india = new H.map.Marker(
+        { lat: 20.5937, lng: 78.9629 }
+        // { icon: cubsIcon }
       );
-    map.addObject(cubsMarker);
+    map.addObject(india);
 
     //add the third marker
     let abcIcon = new H.map.Icon(
         svgMarkup.replace("${FILL}", "white").replace("${STROKE}", "orange")
       ),
-      abcMarker = new H.map.Marker(
-        { lat: -28.86944, lng: 153.04453 },
-        { icon: abcIcon }
+      australia = new H.map.Marker(
+        { lat: -28.86944, lng: 153.04453 }
+        // { icon: abcIcon }
       );
-    map.addObject(abcMarker);
+    map.addObject(australia);
 
-    abcMarker.addEventListener(
+    //group all markers
+    let group = new H.map.Group();
+    group.addObjects([africa, india, australia]);
+    map.addObject(group);
+
+    // get geo bounding box for the group and set it to the map
+    map.getViewModel().setLookAtData({
+      bounds: group.getBoundingBox(),
+    });
+
+    australia.addEventListener(
       "tap",
       function (evt) {
         // event target is the marker itself, group is a parent event target
@@ -75,7 +85,11 @@ const Map = (props) => {
     lineString.pushPoint({ lat: -28.86944, lng: 153.04453 });
     // lineString.pushPoint({lat:52.5166, lng:13.3833});
 
-    map.addObject(new H.map.Polyline(lineString, { style: { lineWidth: 5, lineColor: "red" } }));
+    map.addObject(
+      new H.map.Polyline(lineString, {
+        style: { lineWidth: 5, lineColor: "red" },
+      })
+    );
   };
 
   //drop pin and get LAT and LONG
@@ -102,8 +116,7 @@ const Map = (props) => {
     });
   };
   const dynamicPin = (latt, long, map) => {
-    let svgMarkup =
-      `<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
+    let svgMarkup = `<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">' +
       '<rect stroke="black" fill="pink" x="1" y="1" width="22" height="22" />' +
       '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
       'text-anchor="middle" fill="black" >${10}</text></svg>`;
@@ -120,33 +133,34 @@ const Map = (props) => {
 
   useEffect(() => {
     if (shouldLog.current) {
-    if (!map) {
-      shouldLog.current = false;
-      console.log('herer')
-      // instantiate a platform, default layers and a map as usual
-      const platform = new H.service.Platform({
-        apikey: "KhMSKvQ8SQplClcz_4wM0f0BU0GBuuXqxXlF57a4OOY",
-      });
-      
-      const layers = platform.createDefaultLayers();
-      console.log('layers ----->', layers)
-      const map = new H.Map(ref.current, layers.raster.terrain.map, {
-        pixelRatio: window.devicePixelRatio || 1,
-        center: { lat: 0, lng: 0 },
-        zoom: 1,
-      });
-      // onResize(ref.current, () => {
-      //   map.getViewPort().resize();
-      // });
+      if (!map) {
+        shouldLog.current = false;
+        console.log("herer");
+        // instantiate a platform, default layers and a map as usual
+        const platform = new H.service.Platform({
+          apikey: "KhMSKvQ8SQplClcz_4wM0f0BU0GBuuXqxXlF57a4OOY",
+        });
 
-      //make map draggable
-      new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+        const layers = platform.createDefaultLayers();
+        console.log("layers ----->", layers);
+        const map = new H.Map(ref.current, layers.raster.terrain.map, {
+          pixelRatio: window.devicePixelRatio || 1,
+          center: { lat: 0, lng: 0 },
+          zoom: 1,
+        });
+        // onResize(ref.current, () => {
+        //   map.getViewPort().resize();
+        // });
 
-      setMap(map);
-      addSVGMarkers(map);
-      addPolylineToMap(map);
-      // setUpClickListener(map);
-    }}
+        //make map draggable
+        new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+
+        setMap(map);
+        addSVGMarkers(map);
+        addPolylineToMap(map);
+        // setUpClickListener(map);
+      }
+    }
     // if (map) {
     //   clearTimeout(timeout);
     //   setTimeout(() => {
