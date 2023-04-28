@@ -75,7 +75,7 @@ const Map = (props) => {
     lineString.pushPoint({ lat: -28.86944, lng: 153.04453 });
     // lineString.pushPoint({lat:52.5166, lng:13.3833});
 
-    map.addObject(new H.map.Polyline(lineString, { style: { lineWidth: 4 } }));
+    map.addObject(new H.map.Polyline(lineString, { style: { lineWidth: 5, lineColor: "red" } }));
   };
 
   //drop pin and get LAT and LONG
